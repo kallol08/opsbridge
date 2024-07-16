@@ -7,11 +7,11 @@ metadata:
 spec:
   chart:
     spec:
-      chart: opsbridge-suite
+      chart: src/opsbridge-suite
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: GitRepository
-        name: opsbridge-chart
+        name: opsbridge-manifests
       version: 2.8.1+24.2.1-35
   interval: 10s
   targetNamespace: opsbridge
