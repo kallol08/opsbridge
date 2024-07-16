@@ -7,5 +7,5 @@ metadata:
 spec:
   interval: 1m0s
   ref:
-    branch: main
-  url: https://github.com/kallol08/opsbridge-suite-source/tree/307a62cf41bfd63d51b4ee5c15e6fb170d70ada9/src
+    branch: src
+  url: https://github.com/kallol08/opsbridge-suite-source
