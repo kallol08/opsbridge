@@ -1,11 +1,8 @@
----
 apiVersion: source.toolkit.fluxcd.io/v1
-kind: GitRepository
+kind: HelmRepository
 metadata:
   name: opsbridge-chart
   namespace: flux-system
 spec:
   interval: 1m0s
-  ref:
-    branch: src
-  url: https://github.com/kallol08/opsbridge-suite-source
+  url: https://github.com/kallol08/opsbridge-suite-source/tree/main/src
