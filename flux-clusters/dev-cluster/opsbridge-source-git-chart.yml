@@ -1,0 +1,11 @@
+---
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: opsbridge-chart
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  ref:
+    branch: main
+  url: https://github.com/kallol08/opsbridge-suite-source/tree/307a62cf41bfd63d51b4ee5c15e6fb170d70ada9/src
