@@ -1,0 +1,602 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: opsbridge-suite
+  namespace: flux-system
+spec:
+  chart:
+    spec:
+      chart: opsbridge-suite-2.8.1+24.2.1-35
+      reconcileStrategy: ChartVersion
+      sourceRef:
+        kind: GitRepository
+        name: opsbridge-chart
+      version: 2.8.1+24.2.1-35
+  interval: 10s
+  targetNamespace: opsbridge
+  values:
+    acceptEula: true
+    aec:
+      deployment:
+        database:
+          dbName: aec
+          user: aec
+          userPasswordKey: AEC_DB_USER_PASSWORD_KEY
+      replicaCount: 1
+    autopass:
+      deployment:
+        database:
+          dbName: autopass
+          schema: autopassschema
+          user: autopass
+          userPasswordKey: AUTOPASS_DB_USER_PASSWORD_KEY
+    bvd:
+      autopassBridge:
+        replicaCount: 1
+        resources:
+          limits:
+            cpu: 1
+            memory: 1Gi
+          requests:
+            cpu: 0.1
+            memory: 256Mi
+      bvd:
+        controller:
+          replicaCount: 1
+          resources:
+            limits:
+              cpu: 1
+              memory: 1Gi
+            requests:
+              cpu: 0.1
+              memory: 256Mi
+        explore:
+          replicaCount: 1
+          resources:
+            limits:
+              cpu: 2
+              memory: 2Gi
+            requests:
+              cpu: 0.1
+              memory: 256Mi
+        quexserv:
+          replicaCount: 1
+          resources:
+            limits:
+              cpu: 2
+              memory: 2Gi
+            requests:
+              cpu: 0.1
+              memory: 256Mi
+        receiver:
+          replicaCount: 1
+          resources:
+            limits:
+              cpu: 2
+              memory: 2Gi
+            requests:
+              cpu: 0.1
+              memory: 256Mi
+        www:
+          replicaCount: 1
+          resources:
+            limits:
+              cpu: 2
+              memory: 2Gi
+            requests:
+              cpu: 0.1
+              memory: 256Mi
+      deployment:
+        database:
+          dbName: bvd
+          user: bvd
+          userPasswordKey: BVD_DB_USER_PASSWORD_KEY
+      redis:
+        replicaCount: 1
+        resources:
+          limits:
+            cpu: 2
+            memory: 2Gi
+          requests:
+            cpu: 0.1
+            memory: 1Gi
+      smtpServer:
+        from: null
+        host: null
+        passwordKey: schedule_mail_password_key
+        port: null
+        security: null
+        user: null
+    cmsgateway:
+      deployment:
+        ucmdb:
+          host: itom-ucmdb-svc
+          port: 8443
+          protocol: https
+          userName: UISysadmin
+    credentialmanager:
+      deployment:
+        database:
+          dbName: credentialmanager
+          user: credentialmanageruser
+          userPasswordKey: CM_DB_PASSWD_KEY
+    global:
+      amc:
+        containerizedOBM: true
+        customTqls: []
+        dataBrokerNodePort: 1383
+        externalOBM: false
+        numOfParallelCollections: 25
+        numOfParallelHistoryCollections: 10
+        obmHostname: null
+        port: 443
+        rtsmProtocol: https
+        rtsmUsername: null
+        serverPort: 383
+      autoStartAgentMetricCollector: false
+      cluster:
+        k8sProvider: aws
+      cms:
+        externalOBM: false
+        port: 8443
+        secrets:
+          UISysadmin: ucmdb_uisysadmin_password
+        udHostname: null
+        udProtocol: https
+        udUsername: null
+      database:
+        host: Externalpostgresql.swinfra.net
+        internal: true
+        oracleConnectionString: null
+        oracleSid: null
+        port: 5432
+        tlsEnabled: true
+        type: postgresql
+      deployment:
+        size: evaluation
+      di:
+        externalAccessHost:
+          administration: null
+          dataAccess: null
+          pulsar: null
+          receiver: null
+        externalDNS:
+          enabled: false
+      docker:
+        imagePullPolicy: IfNotPresent
+        imagePullSecret: ecr-key
+        orgName: hpeswitom
+        registry: 193002196427.dkr.ecr.ap-southeast-2.amazonaws.com
+      expose:
+        enableALB: false
+        internalLoadBalancer:
+          annotations: {}
+        type: null
+      externalAccessHost: opsbridge-suite.spacdemo.net
+      externalAccessPort: 443
+      isAgentMetricCollectorEnabled: false
+      nginx:
+        httpsPort: 30443
+      persistence:
+        enabled: true
+        storageClasses:
+          default-rwo: opsb-default
+          default-rwx: opsb-default
+      prometheus:
+        deployGrafanaConfig: false
+        deployPrometheusConfig: false
+      rbac:
+        clusterRoleCreate: true
+      securityContext:
+        fsGroup: 1999
+        user: 1999
+      services:
+        agentlessMonitoring:
+          deploy: true
+        anomalyDetection: null
+        applicationMonitoring: null
+        automaticEventCorrelation: null
+        hyperscaleObservability: null
+        obm:
+          deploy: true
+        opticDataLake:
+          externalOpticDataLake:
+            connectUsingExternalAccessHost:
+              diAdminPort: null
+              diDataAccessPort: null
+              diPulsarSslPort: null
+              diPulsarWebPort: null
+              diReceiverPort: null
+            connectUsingNamespace:
+              namespace: null
+            connectUsingServiceFQDN:
+              diAdminHost: null
+              diAdminPort: null
+              diDataAccessHost: null
+              diDataAccessPort: null
+              diPulsarHost: null
+              diPulsarSslPort: null
+              diPulsarWebPort: null
+              diReceiverHost: null
+              diReceiverPort: null
+              ingressControllerHost: null
+              ingressControllerPort: null
+            externalAccessHost: null
+            externalAccessPort: null
+            integrationUser: null
+        opticReporting:
+          deploy: true
+        stakeholderDashboard:
+          deploy: true
+      vertica:
+        db: itomdb
+        embedded: true
+        host: itom-di-vertica-svc
+        port: 5444
+        resourcepoolname: itom_di_stream_respool_provider_default
+        rouser: dbadmin
+        rouserkey: ITOMDI_RO_USER_PASSWORD_KEY
+        rwuser: dbadmin
+        rwuserkey: ITOMDI_DBA_PASSWORD_KEY
+        tlsEnabled: true
+    idm:
+      deployment:
+        database:
+          dbName: idm
+          user: idm
+          userPasswordKey: IDM_DB_USER_PASSWORD_KEY
+        minAvailable: 1
+        replicas: 1
+    itom-di-udx-scheduler:
+      scheduler:
+        resources:
+          limits:
+            cpu: 1
+            memory: 2Gi
+          requests:
+            cpu: 500m
+            memory: 512Mi
+    itom-ingress-controller:
+      deployment:
+        replicas: 1
+      nginx:
+        service:
+          external:
+            enable: false
+          internal:
+            enable: true
+    itom-oba-config:
+      deployment:
+        oba:
+          configParameterServicePort: 9090
+          host: null
+          protocol: https
+    itomdiadministration:
+      broker:
+        replicaCount: 1
+      resources:
+        limits:
+          cpu: "1"
+          memory: 4096Mi
+        requests:
+          cpu: "0.2"
+          memory: 256Mi
+    itomdidataaccess:
+      resources:
+        limits:
+          cpu: "1"
+          memory: 2048Mi
+        requests:
+          cpu: "0.2"
+          memory: 512Mi
+    itomdimetadataserver:
+      resources:
+        limits:
+          cpu: "1"
+          memory: 3072Mi
+        requests:
+          cpu: "0.2"
+          memory: 512Mi
+    itomdimonitoring:
+      monitoring:
+        verticapromexporter:
+          resources:
+            limits:
+              cpu: 250m
+              memory: 512Mi
+            requests:
+              cpu: 100m
+              memory: 256Mi
+    itomdipostload:
+      dipostload:
+        config:
+          taskExecutor:
+            replicaCount: "1"
+          taskGenerator:
+            replicaCount: "1"
+      resources:
+        taskExecutor:
+          limits:
+            cpu: "4"
+            memory: 1024Mi
+          requests:
+            cpu: "0.5"
+            memory: 512Mi
+        taskGenerator:
+          limits:
+            cpu: "4"
+            memory: 1024Mi
+          requests:
+            cpu: "0.5"
+            memory: 512Mi
+    itomdipulsar:
+      bookkeeper:
+        replicaCount: 1
+        resources:
+          limits:
+            cpu: 4
+            memory: 4Gi
+          requests:
+            cpu: 0.5
+            memory: 2Gi
+        volumes:
+          configData:
+            journalSyncData: true
+          journal:
+            local_storage: false
+            size: 4Gi
+            storageClassName: io2
+          ledgers:
+            local_storage: false
+            size: 20Gi
+            storageClassName: gp3
+      broker:
+        replicaCount: 1
+        resources:
+          limits:
+            cpu: 4
+            memory: 4Gi
+          requests:
+            cpu: 0.5
+            memory: 2Gi
+      components:
+        autorecovery: false
+        bastion: false
+      proxy:
+        config:
+          useExternalCASignedCerts: false
+        replicaCount: 1
+        resources:
+          limits:
+            cpu: 4
+            memory: 4Gi
+          requests:
+            cpu: 0.5
+            memory: 2Gi
+      zookeeper:
+        replicaCount: 1
+        resources:
+          limits:
+            cpu: 2
+            memory: 4Gi
+          requests:
+            cpu: 0.5
+            memory: 512Mi
+        volumes:
+          data:
+            local_storage: false
+            size: 4Gi
+            storageClassName: gp3
+          dataLog:
+            local_storage: false
+            size: 10Gi
+            storageClassName: gp3
+    itomdireceiver:
+      direceiver:
+        config:
+          replicaCount: 1
+      resources:
+        limits:
+          cpu: "4"
+          memory: 4096Mi
+        requests:
+          cpu: "0.5"
+          memory: 1024Mi
+    itomdisharedvertica:
+      resources:
+        limits:
+          cpu: "4"
+          memory: 8192Mi
+        requests:
+          cpu: "1"
+          memory: 512Mi
+    itommonitoringsnf:
+      deployment:
+        database:
+          dbName: monitoringsnfdb
+          user: monitoringsnfuser
+          userPasswordKey: SNF_DB_USER_PASSWORD_KEY
+    itomopsbridgecollectionmanager:
+      collectionmanager:
+        agentmetric:
+          resources:
+            limits:
+              cpu: "2"
+              memory: 600Mi
+            requests:
+              cpu: 100m
+              memory: 100Mi
+        resources:
+          limits:
+            cpu: "2"
+            memory: 500Mi
+          requests:
+            cpu: 100m
+            memory: 200Mi
+    itomopsbridgecontentadmin:
+      contentadmin:
+        config:
+          admin:
+            replicaCount: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 50Mi
+    itomopsbridgedatabroker:
+      collectiondatabroker:
+        config:
+          admin:
+            replicaCount: 1
+        resources:
+          limits:
+            cpu: "2"
+            memory: 3814Mi
+          requests:
+            cpu: "1"
+            memory: 200Mi
+      deployment:
+        config:
+          obmDataCollectorHostname: null
+          obmDataCollectorPort: 383
+          obmDataCollectorProtocol: https
+    itomopsbridgemonitoringadmin:
+      deployment:
+        database:
+          dbName: monitoringadmindb
+          user: monitoringadminuser
+          userPasswordKey: MA_DB_USER_PASSWORD_KEY
+    itomopsbridgenoderesolver:
+      itomnoderesolver:
+        config:
+          admin:
+            replicaCount: 1
+        resources:
+          limits:
+            cpu: "1"
+            memory: 1024Mi
+          requests:
+            cpu: 100m
+            memory: 100Mi
+    nomapiserver:
+      deployment:
+        replicas: 1
+    nommetricstransform:
+      deployment:
+        database:
+          dbName: btcd
+          user: btcd
+          userPasswordKey: BTCD_DB_PASSWD_KEY
+        replicas: 1
+    nomxui:
+      deployment:
+        replicas: 1
+    obm:
+      bbc:
+        port: 383
+      deployment:
+        database:
+          postgresCrlCheckEnabled: true
+        eventDatabase:
+          dbName: obm_event
+          user: obm_event
+          userPasswordKey: OBM_EVENT_DB_USER_PASSWORD_KEY
+        mgmtDatabase:
+          dbName: obm_mgmt
+          user: obm_mgmt
+          userPasswordKey: OBM_MGMT_DB_USER_PASSWORD_KEY
+        size: SMALL
+      evtsvc-artemis:
+        deployment:
+          size: SMALL
+      omi:
+        storageClassName: io2
+      params:
+        haEnabled: false
+        managementPacks:
+          ADMP: false
+          AMCMP: false
+          AmazonWebServicesMP: false
+          BPMContent: false
+          DiagnosticsMP: false
+          Example_Policy_Templates: false
+          ExchangeMP: false
+          GoogleCloudMP: false
+          HANAMP: false
+          IISMP: false
+          InfraMP: true
+          JbsMP: false
+          MSSQLMP: false
+          Microsoft365MP: false
+          MicrosoftAzureMP: false
+          MySQLMP: false
+          OraMP: false
+          PostgreSQLMP: false
+          RealUserMonitorMP: false
+          SAPMP: false
+          SiteScope_Event_Integration: false
+          SiteScopeMetricStreamingMP: false
+          VMWareInfraMP: false
+          WbsMP: false
+          WebLogicMP: false
+    prometheus-cert-exporter:
+      fullnameOverride: prometheus-cert-exporter-opsb
+    secrets:
+      AEC_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      AUTOPASS_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      BTCD_DB_PASSWD_KEY: MUlTTypoZWxwCg==
+      BVD_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      CM_DB_PASSWD_KEY: MUlTTypoZWxwCg==
+      IDM_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      ITOMDI_DBA_PASSWORD_KEY: MUlTTypoZWxwCg==
+      ITOMDI_RO_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      MA_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      OBM_EVENT_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      OBM_MGMT_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      OBM_RTSM_PASSWORD: MUlTTypoZWxwCg==
+      OBM_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      OPTIC_DATALAKE_INTEGRATION_PASSWORD: MUlTTypoZWxwCg==
+      RTSM_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      SNF_DB_USER_PASSWORD_KEY: MUlTTypoZWxwCg==
+      UD_USER_PASSWORD: MUlTTypoZWxwCg==
+      idm_opsbridge_admin_password: MUlTTypoZWxwCg==
+      schedule_mail_password_key: MUlTTypoZWxwCg==
+      sys_admin_password: MUlTTypoZWxwCg==
+      ucmdb_master_key: SVMwX2hlbHBJUzBfaGVscElTMF9oZWxwSVMwX2hlbHA=
+    ucmdbprobe:
+      deployment:
+        jvmMetaspace: 512M
+        jvmXmsMemory: 512
+        jvmXmxMemory: 3072
+        probeSSLFullValidation: 1
+        type: embedded
+        ucmdbServer:
+          hostName: itom-ucmdb-writersvc
+          port: 8443
+      resources:
+        limits:
+          cpu: 4
+          memory: 4Gi
+        requests:
+          cpu: 100m
+          memory: 2Gi
+    ucmdbserver:
+      deployment:
+        database:
+          dbName: rtsm
+          user: rtsm
+          userPasswordKey: RTSM_DB_USER_PASSWORD_KEY
+        instanceSize: S
+        jvmXmsMemory: 512
+        jvmXmxMemory: 3072
+        replicaCount: 1
+      resources:
+        limits:
+          cpu: 2
+          memory: 5Gi
+        requests:
+          cpu: 0.5
+          memory: 4Gi
