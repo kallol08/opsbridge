@@ -7,7 +7,7 @@ metadata:
 spec:
   chart:
     spec:
-      chart: opsbridge-suite-2.8.1+24.2.1-35
+      chart: opsbridge-suite
       reconcileStrategy: ChartVersion
       sourceRef:
         kind: GitRepository
