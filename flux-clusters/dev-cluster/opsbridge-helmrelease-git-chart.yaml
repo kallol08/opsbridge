@@ -137,6 +137,7 @@ spec:
       autoStartAgentMetricCollector: false
       cluster:
         k8sProvider: aws
+        name: opsbridge-suite.spacdemo.net
       cms:
         externalOBM: false
         port: 8443
@@ -261,11 +262,14 @@ spec:
       deployment:
         replicas: 1
       nginx:
+        ingress:
+          enable: true
         service:
           external:
-            enable: false
-          internal:
             enable: true
+          httpsPort: 443
+          internal:
+            enable: false
     itom-oba-config:
       deployment:
         oba:
